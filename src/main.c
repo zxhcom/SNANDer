@@ -75,6 +75,7 @@ void usage(void)
 		" -k             Skip BAD pages, try read or write in to next page\n"\
 		" -L             print list support chips\n"\
 		" -i             read the chip ID info\n"\
+	    " -u             read Unique ID (UID) of SPI NOR Flash\n"
 		"" EHELP ""\
 		" -e             erase chip(full or use with -a [-l])\n"\
 		" -l <bytes>     manually set length\n"\
@@ -97,9 +98,9 @@ int main(int argc, char* argv[])
 	title();
 
 #ifdef EEPROM_SUPPORT
-	while ((c = getopt(argc, argv, "diIhveLkl:a:w:r:o:s:E:f:8")) != -1)
+	while ((c = getopt(argc, argv, "diIhveLkl:a:w:r:o:s:E:f:8u")) != -1)
 #else
-	while ((c = getopt(argc, argv, "diIhveLkl:a:w:r:o:s:")) != -1)
+	while ((c = getopt(argc, argv, "diIhveLkl:a:w:r:o:s:u")) != -1)
 #endif
 	{
 		switch(c)
@@ -184,6 +185,9 @@ int main(int argc, char* argv[])
 			case 'v':
 				vr = 1;
 				break;
+			case 'u':                    
+                op = 'u';
+                break;
 			case 'i':
 			case 'e':
 				if(!op)
@@ -222,7 +226,26 @@ int main(int argc, char* argv[])
 
 	if((flen = flash_cmd_init(&prog)) <= 0)
 		goto out;
+    if (op == 'u') {
+        unsigned char uid[32] = {0};
+        int uid_len = 16;                     // 默认读取 16 字节
 
+        printf("Reading Unique ID (UID)...\n");
+        ret = snor_read_uid(uid, uid_len);    
+
+        if (ret > 0) {
+            printf("Unique ID: ");
+            for (int i = 0; i < ret; i++) {
+                printf("%02X ", uid[i]);
+            }
+            printf("\n");
+            printf("Status: OK\n");
+        } else {
+            printf("Status: Failed to read UID\n");
+        }
+        goto okout;
+    }
+	
 #ifdef EEPROM_SUPPORT
 	if ((eepromsize || mw_eepromsize || seepromsize) && op == 'i') {
 		printf("Programmer not supported auto detect EEPROM!\n\n");

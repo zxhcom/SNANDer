@@ -1,4 +1,4 @@
-SNANDer - Serial Nor/nAND/Eeprom programmeR v.1.7.9.3 by McMCC <mcmcc_at_mail.ru>
+SNANDer - Serial Nor/nAND/Eeprom programmeR v.1.7.9.4 by McMCC <mcmcc_at_mail.ru>
 
   Usage:
  -h             display this message

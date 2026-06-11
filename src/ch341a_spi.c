@@ -519,4 +519,14 @@ int ch341a_spi_read_uid(unsigned char *uid, unsigned int uid_len)
         printf("Failed to send Read UID command\n");
         return -1;
     }
+    memcpy(uid, &resp[cmd_len], uid_len);
+
+    printf("Read UID (%d bytes): ", uid_len);
+    for (unsigned int i = 0; i < uid_len; i++) {
+        printf("%02X ", uid[i]);
+    }
+    printf("\n");
+
+    return 0;
+}
 /* End of [ch341a_spi.c] package */
